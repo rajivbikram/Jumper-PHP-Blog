@@ -2,42 +2,91 @@
 require 'connection.php';
 
 if (isset($_POST['submit'])) {
-    $fullName = $_POST['fullname'];
-    $number = $_POST['number'];
-    $email = $_POST['email'];
+
+    // Fetch & trim inputs
+    $fullName = trim($_POST['fullname']);
+    $number   = trim($_POST['number']);
+    $email    = trim($_POST['email']);
     $password = $_POST['password'];
-    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
+    // Validation flag
+    $isValid = true;
 
+    // FULL NAME
     if (empty($fullName)) {
-        $message = "Please enter your full name";
-        $messageType = 'error';
-    }
-    if (empty($number)) {
-        $message = "Please enter your number";
-        $messageType = 'error';
-    }
-    if (empty($email)) {
-        $message = "Please enter your email";
-        $messageType = 'error';
-    }
-    if (empty($password)) {
-        $message = "Please enter your password";
-        $messageType = 'error';
+        $message = "Please enter your full name.";
+        $messageType = "danger";
+        $isValid = false;
     }
 
-    $sql = "INSERT INTO users (fullname, email, password, status, phone) VALUES ('$fullName', '$email', '$hashed_password', 1, '$number')";
+    // PHONE NUMBER
+    elseif (empty($number)) {
+        $message = "Please enter your phone number.";
+        $messageType = "danger";
+        $isValid = false;
+    }
 
-    if ($conn->query($sql) === TRUE) {
-        $message = "User Registered Successfully.";
-        $messageType = 'success';
-    } else {
-        echo "Error: " . $conn->error;
+    // EMAIL
+    elseif (empty($email)) {
+        $message = "Please enter your email address.";
+        $messageType = "danger";
+        $isValid = false;
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $message = "Invalid email format.";
+        $messageType = "danger";
+        $isValid = false;
+    }
+
+    // PASSWORD
+    elseif (empty($password)) {
+        $message = "Please enter your password.";
+        $messageType = "danger";
+        $isValid = false;
+    } elseif (strlen($password) < 6) {
+        $message = "Password must be at least 6 characters long.";
+        $messageType = "danger";
+        $isValid = false;
+    }
+
+    // CHECK EMAIL EXISTS
+    if ($isValid) {
+        $checkEmail = mysqli_query($conn, "SELECT user_id FROM users WHERE email = '$email'");
+
+        if (mysqli_num_rows($checkEmail) > 0) {
+            $message = "Email already registered.";
+            $messageType = "danger";
+            $isValid = false;
+        }
+    }
+
+    // INSERT DATA
+    if ($isValid) {
+
+        // Escape values
+        $fullName = mysqli_real_escape_string($conn, $fullName);
+        $number   = mysqli_real_escape_string($conn, $number);
+        $email    = mysqli_real_escape_string($conn, $email);
+
+        // Hash password
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+        $sql = "INSERT INTO users (fullname, email, password, status, phone)
+                VALUES ('$fullName', '$email', '$hashed_password', 1, '$number')";
+
+        if ($conn->query($sql) === TRUE) {
+            $message = "User Registered Successfully.";
+            $messageType = "success";
+        } else {
+            $message = "Database Error: " . $conn->error;
+            $messageType = "danger";
+        }
     }
 }
+
 // Close DB connection
 $conn->close();
 ?>
+
 
 <!doctype html>
 <html lang="en">
