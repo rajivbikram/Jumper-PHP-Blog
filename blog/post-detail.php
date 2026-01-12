@@ -68,9 +68,10 @@ $post = mysqli_fetch_assoc($result);
         </p>
         <hr>
         <div class="mt-4">
+            <h4 class="mb-3">Comments</h4>
             <form action="" method="post">
-                <textarea class="form-control" name="comment" placeholder="Post your comment here"></textarea>
-                <button type="submit" name="post_comment" class="btn btn-primary mt-2">Post Comment</button>
+                <textarea class="form-control" name="comment" rows="5" placeholder="Post your comment here"></textarea>
+                <button type="submit" name="post_comment" class="btn btn-primary btn-lg mt-3">Post Comment</button>
             </form>
         </div>
 
