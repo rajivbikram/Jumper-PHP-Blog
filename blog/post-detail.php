@@ -1,6 +1,6 @@
 <?php
 require 'connection.php';
-
+session_start();
 $postSlug = $_GET['slug'];
 
 $sql = "SELECT p.id, p.title, p.slug, p.image, p.content, p.created_at, u.fullname AS author
@@ -14,6 +14,31 @@ if (mysqli_num_rows($result) == 0) {
     exit;
 }
 $post = mysqli_fetch_assoc($result);
+
+if (isset($_POST['post_comment'])) {
+    $comment = $_POST['comment'];
+    $userId = $_SESSION['userId'];
+    $postId = $post['id'];
+    $createdAt = date('Y-m-d H:i:s');
+
+    if (empty($comment)) {
+        $message = "Comment Text is required";
+        $messageType = 'danger';
+    } else {
+        $commentSql = "INSERT INTO comments (comment, post_id, user_id, created_at) VALUES('$comment', '$postId', '$userId', '$createdAt')";
+        if (mysqli_query($conn, $commentSql) === TRUE) {
+            $message = "Comment Created Successfully!";
+            $messageType = 'success';
+        }
+    }
+}
+$postId = $post['id'];
+$allcomment = "SELECT c.id, c.comment, c.created_at, c.user_id, u.fullname AS author
+        FROM comments c
+        JOIN users u ON c.user_id = u.user_id
+        WHERE c.post_id = '$postId'";
+$commentResult = mysqli_query($conn, $allcomment);
+
 
 ?>
 
@@ -68,8 +93,24 @@ $post = mysqli_fetch_assoc($result);
         </p>
         <hr>
         <div class="mt-4">
+            <?php if (mysqli_num_rows($commentResult) > 0) {
+                while ($comment = mysqli_fetch_assoc($commentResult)) {
+            ?>
+                    <div class="border p-2 rounded mb-3">
+                        <p>
+                            <span class="fw-bold">By <?= $comment['author'] ?></span>
+                            <span>
+                                <?= $comment['created_at'] ?>
+                            </span>
+                        </p>
+                        <p>
+                            <?= $comment['comment'] ?>
+                        </p>
+                    </div>
+            <?php }
+            } ?>
             <h4 class="mb-3">Comments</h4>
-            <form action="" method="post">
+            <form action="#" method="post">
                 <textarea class="form-control" name="comment" rows="5" placeholder="Post your comment here"></textarea>
                 <button type="submit" name="post_comment" class="btn btn-primary btn-lg mt-3">Post Comment</button>
             </form>
