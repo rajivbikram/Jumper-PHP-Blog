@@ -96,12 +96,16 @@ $commentResult = mysqli_query($conn, $allcomment);
             <?php if (mysqli_num_rows($commentResult) > 0) {
                 while ($comment = mysqli_fetch_assoc($commentResult)) {
             ?>
-                    <div class="border p-2 rounded mb-3">
-                        <p>
+                    <div class="border p-3 border-3 rounded mb-3">
+                        <p class="d-flex gap-4">
                             <span class="fw-bold">By <?= $comment['author'] ?></span>
                             <span>
                                 <?= $comment['created_at'] ?>
                             </span>
+                            <?php
+                            if ($_SESSION['userId'] == $comment['user_id']) { ?>
+                                <a href="delete-comment.php?id=<?= $comment['id'] ?>" class="btn btn-danger btn-sm ms-auto">Delete</a>
+                            <?php } ?>
                         </p>
                         <p>
                             <?= $comment['comment'] ?>
