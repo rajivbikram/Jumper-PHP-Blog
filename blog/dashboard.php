@@ -32,6 +32,7 @@ if (!isset($_SESSION['isLogin']) == true) {
                     <a href="category-create.php" class="btn btn-primary">Create Category</a>
                     <a href="post-list.php" class="btn btn-success">Manage Posts</a>
                     <a href="post-list.php" class="btn btn-warning">Manage Users</a>
+                    <a href="comment-list.php" class="btn btn-danger">Comments</a>
                 </div>
             </div>
         </div>

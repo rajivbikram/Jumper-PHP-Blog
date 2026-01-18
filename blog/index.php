@@ -12,7 +12,7 @@
 
   <?php include 'include/navbar.php'; ?>
 
-  <div class="container col-xxl-8 px-4">
+  <div class="container col-xxl-8 px-4 h-100">
     <div class="row align-items-center g-5 flex-lg-row-reverse">
 
       <!-- Hero Image -->
@@ -38,6 +38,7 @@
     </div>
   </div>
 
+  <?php include 'include/footer.php'; ?>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>

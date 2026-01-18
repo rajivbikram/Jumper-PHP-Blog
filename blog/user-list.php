@@ -78,7 +78,9 @@ $conn->close();
                                     <td><?= $user['phone'] ?></td>
                                     <td>
                                         <a href="#" class="btn btn-primary btn-sm">Edit</a>
-                                        <a href="#" class="btn btn-danger btn-sm">Delete</a>
+                                        <?php if ($_SESSION['userId'] != $user['user_id']) { ?>
+                                            <a href="user-delete.php?id=<?= $user['user_id'] ?>" class="btn btn-danger btn-sm">Delete</a>
+                                        <?php } ?>
                                     </td>
                                 </tr>
                         <?php }
